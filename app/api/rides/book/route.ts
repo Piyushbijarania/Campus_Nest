@@ -1,5 +1,6 @@
 // Member 4: POST book ride
 import { prisma } from "@/lib/prisma"
+import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
   try {
@@ -9,11 +10,18 @@ export async function POST(req: Request) {
       where: { id: rideId }
     })
 
-    if (!ride || ride.seats <= 0) {
-      return Response.json({
-        success: false,
-        remainingSeats: 0
-      })
+    if (!ride) {
+      return NextResponse.json(
+        { success: false, message: "Ride not found" },
+        { status: 404 }
+      )
+    }
+
+    if (ride.seats <= 0) {
+      return NextResponse.json(
+        { success: false, message: "Ride full" },
+        { status: 400 }
+      )
     }
 
     const updatedRide = await prisma.ride.update({
@@ -23,11 +31,18 @@ export async function POST(req: Request) {
       }
     })
 
-    return Response.json({
+    return NextResponse.json({
       success: true,
       remainingSeats: updatedRide.seats
     })
 
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: "Booking failed" },
+      { status: 500 }
+    )
+  }
+}
   } catch (error) {
     return Response.json({
       success: false

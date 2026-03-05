@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Auth (Member 2) – custom auth with bcrypt; college email only ----
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // bcrypt hash
+  name      String?
+  image     String?
+  college   String?  // derived from email domain, e.g. bitmesra.ac.in; used for ride filtering
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews     Review[]
+  rides       Ride[]
+  pgListings  PGListing[]
+}
+
+// ---- PG Listings (Member 3) - API contract: title, rent, location, distance, description, image ----
+model PGListing {
+  id          String   @id @default(cuid())
+  title       String
+  rent        Int
+  location    String
+  distance    Float    // km from campus
+  description String
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  reviews     Review[]
+}
+
+// ---- Rides (Member 4) - API contract: source, destination, date, seats; filter by college ----
+model Ride {
+  id          String   @id @default(cuid())
+  source      String
+  destination String
+  date        DateTime
+  seats       Int
+  college     String   // filter: ride.college == user.college
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+// ---- Reviews (Member 5) - API contract: listingId, rating, comment; reported flag for reports ----
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      // 1-5
+  comment   String
+  reported  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  listingId String
+  listing   PGListing @relation(fields: [listingId], references: [id])
+
+  @@index([listingId])
+}

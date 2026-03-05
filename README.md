@@ -1,3 +1,17 @@
+# Campus Nest
+
+> A platform for college students — find PG accommodations and share rides.
+
+**Auth:** Custom auth (bcrypt + JWT). Only **college emails** allowed (e.g. `btech25043.24@bitmesra.ac.in`). Domain set via `ALLOWED_EMAIL_DOMAIN` in `.env`.
+
+## Database setup
+
+1. Copy `.env.example` to `.env` and set `DATABASE_URL` (e.g. [Neon](https://neon.tech)).
+2. Run `npm run db:migrate` (creates tables). If the schema has a `password` field on `User`, run migrate again if needed (e.g. name: `add-password`).
+3. Generate client: `npm run db:generate`.
+
+## Project structure
+
 campus_nest/
 │
 ├── app/
@@ -72,5 +86,5 @@ campus_nest/
 │   └── schema.prisma
 │
 ├── middleware.ts
-├── .env
+├── .env.example
 ├── package.json

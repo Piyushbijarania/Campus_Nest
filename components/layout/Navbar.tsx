@@ -17,6 +17,12 @@ export function Navbar() {
           <Link href="/dashboard" className="text-zinc-600 hover:text-zinc-900">
             Dashboard
           </Link>
+          <Link href="/login" className="text-zinc-600 hover:text-zinc-900">
+            Log in
+          </Link>
+          <Link href="/signup" className="text-zinc-600 hover:text-zinc-900">
+            Sign up
+          </Link>
         </div>
       </div>
     </nav>

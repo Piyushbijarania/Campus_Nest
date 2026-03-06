@@ -88,3 +88,16 @@ campus_nest/
 ├── middleware.ts
 ├── .env.example
 ├── package.json
+
+## Deployment
+
+### Vercel Deployment
+
+1. Connect your GitHub repository to Vercel.
+2. Set the following environment variables in Vercel project settings:
+   - `DATABASE_URL`: Your PostgreSQL database URL (e.g., from Neon)
+   - `JWT_SECRET`: A secure random string for JWT signing
+   - `ALLOWED_EMAIL_DOMAIN`: College email domain (e.g., `bitmesra.ac.in`)
+3. Deploy the application.
+
+The database should be set up with the same PostgreSQL instance used in development (e.g., Neon).

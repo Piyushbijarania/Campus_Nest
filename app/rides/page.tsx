@@ -1,8 +1,27 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import RideCard from "@/components/rides/RideCard"
+
 export default function RidesPage() {
+
+  const [rides,setRides] = useState([])
+
+  const loadRides = async () => {
+    const res = await fetch("/api/rides")
+    const data = await res.json()
+    setRides(data)
+  }
+
+  useEffect(()=>{
+    loadRides()
+  },[])
+
   return (
-    <main className="p-6">
-      <h1 className="text-2xl font-semibold">Rides</h1>
-      <p className="text-zinc-600 mt-2">Member 4: GET /api/rides + book</p>
-    </main>
-  );
+    <div className="p-6 space-y-4">
+      {rides.map((ride:any)=>(
+        <RideCard key={ride.id} ride={ride} refresh={loadRides}/>
+      ))}
+    </div>
+  )
 }

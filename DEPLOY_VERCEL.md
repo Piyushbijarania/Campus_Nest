@@ -22,6 +22,9 @@ The app uses **Vercel Blob** for image uploads in production. On the free Hobby 
 
 Max file size is **4 MB** per image (to stay under Vercel’s serverless request body limit).
 
+**Prepare your local project (optional, for Blob uploads in dev):**  
+Run `vercel link` then `vercel env pull` in the project folder so your local `.env` gets the latest env vars (e.g. `BLOB_READ_WRITE_TOKEN` or your custom Blob token). Then uploads will use Vercel Blob locally too.
+
 ---
 
 ## Steps to deploy on Vercel (free)
@@ -111,6 +114,28 @@ Your site will be at `https://your-project-name.vercel.app` (or a custom domain 
 - **Neon:** Ensure your Neon project allows connections from the internet (it does by default). If you use IP allowlists, add Vercel's IPs or allow all (Neon docs).
 - **Cookies:** Auth uses cookies; they work on `*.vercel.app`. For a custom domain, keep using HTTPS (Vercel provides it).
 - **Uploads:** After you create the Blob store and redeploy, PG and tiffin image uploads will work; images are stored in Vercel Blob and URLs are saved in the DB.
+
+---
+
+## Images not working on the deployed site?
+
+If uploads fail or images don’t show on Vercel, do this:
+
+1. **Create a Blob store** (if you haven’t):
+   - Vercel project → **Storage** tab → **Create Database** → **Blob**.
+   - Name the store, set access to **Public**, create it.
+   - Vercel will add the token env var (e.g. `BLOB_READ_WRITE_TOKEN` or a custom name like `PYXIS_READ_WRITE_TOKEN`) to the project.
+
+2. **Confirm the token is set:**
+   - **Settings** → **Environment Variables**.
+   - You should see a variable for the Blob store (name from step 1). It must be present for **Production** (and Preview if you use preview deployments).
+
+3. **Redeploy** after adding or changing the token:
+   - **Deployments** → … on the latest deployment → **Redeploy**.
+
+4. **If the UI shows an upload error**, check the message: it may say *"Add BLOB_READ_WRITE_TOKEN in Vercel → Project → Settings → Environment Variables..."* — that means the token isn’t available at runtime; complete steps 1–3 above.
+
+5. **Existing listings with broken images:** If you had images from local dev (e.g. `/uploads/...`), those paths don’t exist on Vercel. Re-upload images for those listings after Blob is set up, or add new listings; new uploads will get Blob URLs and work.
 
 ---
 

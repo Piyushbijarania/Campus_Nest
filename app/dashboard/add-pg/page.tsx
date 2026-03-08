@@ -196,7 +196,7 @@ export default function AddPGPage() {
                         const res = await fetch("/api/upload", { method: "POST", body: fd });
                         const data = await res.json();
                         if (data.url) urls.push(data.url);
-                        else setError(data.error || "Upload failed");
+                        else setError(data.details || data.error || "Upload failed");
                       }
                       if (urls.length) setForm((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
                       setUploading(false);

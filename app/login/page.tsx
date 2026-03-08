@@ -41,11 +41,11 @@ function LoginForm() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-semibold text-zinc-900">Log in</h1>
-        <p className="mt-1 text-sm text-zinc-600">Use your college email.</p>
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+    <main className="min-h-screen bg-slate-50/50 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm rounded-2xl border border-slate-100 bg-white p-8 shadow-sm">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Log in</h1>
+        <p className="mt-2 text-sm text-slate-600">Use your college email.</p>
+        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
           <Input
             label="Email"
             type="email"
@@ -70,13 +70,13 @@ function LoginForm() {
               {error}
             </p>
           )}
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
-        <p className="mt-4 text-center text-sm text-zinc-600">
+        <p className="mt-6 text-center text-sm text-slate-600">
           Don’t have an account?{" "}
-          <Link href="/signup" className="font-medium text-zinc-900 underline">
+          <Link href="/signup" className="font-semibold text-teal-600 transition-colors duration-200 hover:text-teal-700">
             Sign up
           </Link>
         </p>

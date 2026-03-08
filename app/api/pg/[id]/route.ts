@@ -1,13 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/auth";
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getSession();
+  if (!user) {
+    return NextResponse.json({ message: "Please log in to view this PG" }, { status: 401 });
+  }
   try {
     const { id } = await params;
-
     const listing = await prisma.pGListing.findUnique({
       where: { id },
       select: {
@@ -17,22 +21,17 @@ export async function GET(
         location: true,
         distance: true,
         description: true,
-        image: true,
-        reviews: {
-          select: {
-            rating: true
-          }
-        }
-      }
+        images: true,
+        reviews: { select: { rating: true } },
+      },
     });
 
     if (!listing) {
-      return NextResponse.json({ message: 'PG listing not found' }, { status: 404 });
+      return NextResponse.json({ message: "PG listing not found" }, { status: 404 });
     }
 
-    // Calculate average rating
-    const ratings = listing.reviews.map(review => review.rating);
-    const averageRating = ratings.length > 0 ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
+    const ratings = listing.reviews.map((r) => r.rating);
+    const averageRating = ratings.length > 0 ? ratings.reduce((s, r) => s + r, 0) / ratings.length : 0;
 
     return NextResponse.json({
       id: listing.id,
@@ -41,38 +40,11 @@ export async function GET(
       location: listing.location,
       distance: listing.distance,
       description: listing.description,
-      image: listing.image,
-      rating: Math.round(averageRating * 10) / 10 // Round to 1 decimal place
+      images: listing.images ?? [],
+      rating: Math.round(averageRating * 10) / 10,
     });
   } catch (error) {
-    console.error('Error fetching PG listing:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching PG listing:", error);
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
-// Member 3: GET single PG by id
-import { prisma } from "@/lib/prisma";
-
-// GET /api/pg/[id] - Get single PG by id
-export async function GET(_request, { params }) {
-  const { id } = await params;
-  const pg = await prisma.pGListing.findUnique({
-    where: { id },
-    include: { reviews: true },
-  });
-  if (!pg) {
-    return Response.json({ message: "PG not found" }, { status: 404 });
-  }
-  const avgRating =
-    pg.reviews.length > 0
-      ? pg.reviews.reduce((sum, r) => sum + r.rating, 0) / pg.reviews.length
-      : 0;
-  return Response.json({
-    id: pg.id,
-    title: pg.title,
-    rent: pg.rent,
-    location: pg.location,
-    distance: pg.distance,
-    description: pg.description,
-    image: pg.image,
-    rating: Number(avgRating.toFixed(2)),
-  });
 }

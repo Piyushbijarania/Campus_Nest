@@ -24,17 +24,19 @@ model User {
   reviews     Review[]
   rides       Ride[]
   pgListings  PGListing[]
+  tiffinCenters TiffinCenter[]
+  tiffinReviews TiffinReview[]
 }
 
-// ---- PG Listings (Member 3) - API contract: title, rent, location, distance, description, image ----
+// ---- PG Listings (Member 3) - title, rent, location, distance, description, images (URLs) ----
 model PGListing {
   id          String   @id @default(cuid())
   title       String
   rent        Int
   location    String
-  distance    Float    // km from campus
+  distance    Float
   description String
-  image       String
+  images      String[] // multiple photo URLs (stored in public/uploads or external)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   userId      String?
@@ -43,14 +45,48 @@ model PGListing {
   reviews     Review[]
 }
 
-// ---- Rides (Member 4) - API contract: source, destination, date, seats; filter by college ----
+// ---- Tiffin Centers – same structure as PG: title, rent (monthly), location, distance, description, images ----
+model TiffinCenter {
+  id          String   @id @default(cuid())
+  title       String
+  rent        Int      // monthly price in ₹
+  location    String
+  distance    Float
+  description String
+  images      String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+
+  tiffinReviews TiffinReview[]
+}
+
+// ---- Tiffin Reviews (like Review but for TiffinCenter) ----
+model TiffinReview {
+  id            String       @id @default(cuid())
+  rating        Int
+  comment       String
+  reported      Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  tiffinCenterId String
+  tiffinCenter   TiffinCenter @relation(fields: [tiffinCenterId], references: [id])
+
+  @@index([tiffinCenterId])
+}
+
+// ---- Rides (Member 4) - source, destination, date, seats, contactInfo; filter by college ----
 model Ride {
   id          String   @id @default(cuid())
   source      String
   destination String
   date        DateTime
   seats       Int
-  college     String   // filter: ride.college == user.college
+  college     String
+  contactInfo String?  // phone/email for riders to contact creator
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   userId      String?

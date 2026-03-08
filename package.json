@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:webpack": "next dev --webpack",
+    "clean": "node -e \"try{require('fs').rmSync('.next',{recursive:true});console.log('Cleared .next');}catch(e){}\"",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
@@ -13,9 +15,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
+    "@vercel/blob": "^2.3.1",
     "bcryptjs": "^3.0.3",
-    "jsonwebtoken": "^9.0.3",
     "jose": "^6.2.0",
+    "jsonwebtoken": "^9.0.3",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

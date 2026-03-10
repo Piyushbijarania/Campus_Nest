@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 export type PGFilterState = {
+  search: string;
   rentMin: string;
   rentMax: string;
   distanceMax: string;
@@ -16,19 +17,33 @@ export function PGFilter({
   filters: PGFilterState;
   setFilters: React.Dispatch<React.SetStateAction<PGFilterState>>;
 }) {
+  const hasActiveFilters = filters.search || filters.rentMin || filters.rentMax || filters.distanceMax || filters.ratingMin;
+  const clearFilters = () => setFilters({ search: "", rentMin: "", rentMax: "", distanceMax: "", ratingMin: "" });
+
   return (
     <div className="mb-8 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <span className="text-sm font-medium text-slate-700">Filters</span>
-        {(filters.rentMin || filters.rentMax || filters.distanceMax || filters.ratingMin) && (
+        <span className="text-sm font-medium text-slate-700">Search &amp; filters</span>
+        {hasActiveFilters && (
           <button
             type="button"
-            onClick={() => setFilters({ rentMin: "", rentMax: "", distanceMax: "", ratingMin: "" })}
+            onClick={clearFilters}
             className="text-sm font-medium text-teal-600 transition-colors duration-200 hover:text-teal-700"
           >
             Clear all
           </button>
         )}
+      </div>
+      <div className="mb-4">
+        <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-slate-500">Search</label>
+        <input
+          type="search"
+          name="search"
+          value={filters.search}
+          onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+          placeholder="Search by title, location or description…"
+          className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+        />
       </div>
       <div className="flex flex-wrap items-end gap-4">
         <div className="min-w-[120px] flex-1 sm:min-w-[140px]">

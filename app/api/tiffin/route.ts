@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
     const maxRent = searchParams.get("maxRent") ? parseInt(searchParams.get("maxRent")!, 10) : undefined;
     const maxDistance = searchParams.get("maxDistance") ? parseFloat(searchParams.get("maxDistance")!) : undefined;
     const minRating = searchParams.get("minRating") ? parseFloat(searchParams.get("minRating")!) : undefined;
+    const search = searchParams.get("search")?.trim() || undefined;
 
     const list = await prisma.tiffinCenter.findMany({
       select: {
@@ -27,6 +28,13 @@ export async function GET(request: NextRequest) {
         ...(minRent != null && { rent: { gte: minRent } }),
         ...(maxRent != null && { rent: { lte: maxRent } }),
         ...(maxDistance != null && { distance: { lte: maxDistance } }),
+        ...(search && search.length > 0 && {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+            { location: { contains: search, mode: "insensitive" } },
+          ],
+        }),
       },
       orderBy: { createdAt: "desc" },
     });

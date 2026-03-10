@@ -16,6 +16,7 @@ export default function TiffinListPage() {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [filters, setFilters] = useState({
+    search: "",
     rentMin: "",
     rentMax: "",
     distanceMax: "",

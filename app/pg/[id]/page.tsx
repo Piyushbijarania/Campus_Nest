@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import ReviewList from "@/components/ReviewList";
 import AddReview from "@/components/AddReview";
 import { ImageCarousel } from "@/components/ImageCarousel";
+import { AdminDeletePGButton } from "@/components/admin/AdminDeletePGButton";
 
 export default async function SinglePGPage({
   params,
@@ -52,6 +53,11 @@ export default async function SinglePGPage({
         >
           ← Back to PGs
         </Link>
+
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <span />
+          <AdminDeletePGButton pgId={id} />
+        </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
           <ImageCarousel

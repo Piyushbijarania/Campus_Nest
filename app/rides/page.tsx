@@ -34,6 +34,19 @@ export default function RidesPage() {
     loadRides().finally(() => setLoading(false));
   }, []);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setIsAdmin(data?.isAdmin ?? false))
+      .catch(() => setIsAdmin(false));
+  }, []);
+
+  const handleDeleteRide = async (id: string) => {
+    const res = await fetch(`/api/rides/${id}`, { method: "DELETE", credentials: "include" });
+    if (res.ok) loadRides();
+  };
+
   return (
     <main className="min-h-screen bg-slate-50/50">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
@@ -86,7 +99,7 @@ export default function RidesPage() {
         ) : (
           <div className="space-y-4">
             {rides.map((ride) => (
-              <RideCard key={ride.id} ride={ride} refresh={loadRides} />
+              <RideCard key={ride.id} ride={ride} refresh={loadRides} isAdmin={isAdmin} onDelete={handleDeleteRide} />
             ))}
           </div>
         )}

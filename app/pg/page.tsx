@@ -14,6 +14,7 @@ export default function PGListPage() {
     image: string;
   }>>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [filters, setFilters] = useState({
     rentMin: "",
     rentMax: "",
@@ -33,6 +34,18 @@ export default function PGListPage() {
       .catch(() => setPgs([]))
       .finally(() => setLoading(false));
   }, [filters]);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setIsAdmin(data?.isAdmin ?? false))
+      .catch(() => setIsAdmin(false));
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    const res = await fetch(`/api/pg/${id}`, { method: "DELETE", credentials: "include" });
+    if (res.ok) setPgs((prev) => prev.filter((p) => p.id !== id));
+  };
 
   return (
     <main className="min-h-screen bg-slate-50/50">
@@ -71,7 +84,7 @@ export default function PGListPage() {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pgs.map((pg) => (
-              <PGCard key={pg.id} pg={pg} />
+              <PGCard key={pg.id} pg={pg} isAdmin={isAdmin} onDelete={handleDelete} />
             ))}
           </div>
         )}

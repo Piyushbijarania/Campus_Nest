@@ -9,6 +9,12 @@ export type SessionUser = {
   college: string | null;
 };
 
+/** Returns true if the email is the configured admin email (case-insensitive). */
+export function isAdminEmail(email: string): boolean {
+  const admin = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  return !!admin && email.trim().toLowerCase() === admin;
+}
+
 export async function getSession(): Promise<SessionUser | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;

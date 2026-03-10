@@ -14,6 +14,7 @@ export default function TiffinListPage() {
     image: string;
   }>>([]);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [filters, setFilters] = useState({
     rentMin: "",
     rentMax: "",
@@ -21,7 +22,7 @@ export default function TiffinListPage() {
     ratingMin: "",
   });
 
-  useEffect(() => {
+  const loadList = () => {
     setLoading(true);
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([k, v]) => {
@@ -32,7 +33,23 @@ export default function TiffinListPage() {
       .then(setList)
       .catch(() => setList([]))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadList();
   }, [filters]);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setIsAdmin(data?.isAdmin ?? false))
+      .catch(() => setIsAdmin(false));
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    const res = await fetch(`/api/tiffin/${id}`, { method: "DELETE", credentials: "include" });
+    if (res.ok) setList((prev) => prev.filter((t) => t.id !== id));
+  };
 
   return (
     <main className="min-h-screen bg-slate-50/50">
@@ -71,7 +88,7 @@ export default function TiffinListPage() {
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((t) => (
-              <TiffinCard key={t.id} tiffin={t} />
+              <TiffinCard key={t.id} tiffin={t} isAdmin={isAdmin} onDelete={handleDelete} />
             ))}
           </div>
         )}

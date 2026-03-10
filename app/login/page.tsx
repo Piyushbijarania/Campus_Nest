@@ -1,13 +1,12 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") || "/dashboard";
 
@@ -15,9 +14,37 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const submittedRef = useRef(false);
+
+  async function handleGuestLogin() {
+    if (submittedRef.current) return;
+    submittedRef.current = true;
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/guest", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Guest login failed.");
+        submittedRef.current = false;
+        setLoading(false);
+        return;
+      }
+      window.location.href = from;
+      return;
+    } catch {
+      setError("Something went wrong.");
+      submittedRef.current = false;
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submittedRef.current) return;
+    submittedRef.current = true;
     setError("");
     setLoading(true);
     try {
@@ -29,12 +56,18 @@ function LoginForm() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.message || "Login failed.");
+        submittedRef.current = false;
+        setLoading(false);
         return;
       }
-      router.push(from);
-      router.refresh();
+      // Full-page redirect so the browser sends the new cookie on the next request.
+      // Avoids race where client navigation runs before Set-Cookie is applied.
+      window.location.href = from;
+      return;
     } catch {
       setError("Something went wrong.");
+      submittedRef.current = false;
+      setLoading(false);
     } finally {
       setLoading(false);
     }
@@ -74,6 +107,17 @@ function LoginForm() {
             {loading ? "Signing in…" : "Sign in"}
           </Button>
         </form>
+        <div className="mt-4 flex flex-col gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={loading}
+            onClick={handleGuestLogin}
+            className="w-full"
+          >
+            {loading ? "Signing in…" : "Guest login"}
+          </Button>
+        </div>
         <p className="mt-6 text-center text-sm text-slate-600">
           Don’t have an account?{" "}
           <Link href="/signup" className="font-semibold text-teal-600 transition-colors duration-200 hover:text-teal-700">

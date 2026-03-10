@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { getSession, isAdminEmail } from "@/lib/auth";
 
 export async function GET() {
   const user = await getSession();
@@ -11,5 +11,6 @@ export async function GET() {
     email: user.email,
     name: user.name,
     college: user.college,
+    isAdmin: isAdminEmail(user.email),
   });
 }

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ImageCarousel } from "@/components/ImageCarousel";
 import AddTiffinReview from "@/components/tiffin/AddTiffinReview";
 import TiffinReviewList from "@/components/tiffin/TiffinReviewList";
+import { AdminDeleteTiffinButton } from "@/components/admin/AdminDeleteTiffinButton";
 
 export default async function SingleTiffinPage({
   params,
@@ -50,6 +51,11 @@ export default async function SingleTiffinPage({
         >
           ← Back to Tiffin Centers
         </Link>
+
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <span />
+          <AdminDeleteTiffinButton tiffinId={id} />
+        </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
           <ImageCarousel

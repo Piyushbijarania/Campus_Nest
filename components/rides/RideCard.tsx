@@ -3,9 +3,13 @@
 export default function RideCard({
   ride,
   refresh,
+  isAdmin,
+  onDelete,
 }: {
   ride: { id: string; source: string; destination: string; date: string; seats: number; contactInfo?: string | null };
   refresh: () => void;
+  isAdmin?: boolean;
+  onDelete?: (id: string) => void;
 }) {
   const bookRide = async () => {
     await fetch("/api/rides/book", {
@@ -14,6 +18,12 @@ export default function RideCard({
       body: JSON.stringify({ rideId: ride.id }),
     });
     refresh();
+  };
+
+  const handleDelete = async () => {
+    if (!onDelete || !confirm("Delete this ride?")) return;
+    const res = await fetch(`/api/rides/${ride.id}`, { method: "DELETE" });
+    if (res.ok) refresh();
   };
 
   const date = new Date(ride.date);
@@ -30,10 +40,19 @@ export default function RideCard({
 
   return (
     <div
-      className={`overflow-hidden rounded-2xl border bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md ${
+      className={`relative overflow-hidden rounded-2xl border bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md ${
         isFull ? "border-slate-100 hover:border-slate-200" : "border-l-4 border-l-teal-500 border-slate-100 hover:border-slate-200"
       }`}
     >
+      {isAdmin && onDelete && (
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="absolute right-4 top-4 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white shadow hover:bg-red-700"
+        >
+          Delete
+        </button>
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
           <h3 className="text-xl font-semibold text-slate-900">

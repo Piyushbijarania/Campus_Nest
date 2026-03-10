@@ -9,10 +9,9 @@ export type SessionUser = {
   college: string | null;
 };
 
-/** Returns true if the email is the configured admin email (case-insensitive). */
+/** Returns true if the email contains "admin" (case-insensitive). e.g. admin@bitmesra.ac.in */
 export function isAdminEmail(email: string): boolean {
-  const admin = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  return !!admin && email.trim().toLowerCase() === admin;
+  return email.trim().toLowerCase().includes("admin");
 }
 
 export async function getSession(): Promise<SessionUser | null> {

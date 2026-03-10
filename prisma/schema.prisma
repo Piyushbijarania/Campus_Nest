@@ -108,3 +108,12 @@ model Review {
 
   @@index([listingId])
 }
+
+// ---- Campus expansion – "Invite your campus" leads ----
+model CampusRequest {
+  id         String   @id @default(cuid())
+  email     String
+  college   String?  // college name or domain they want to add
+  message   String?  // optional note
+  createdAt DateTime @default(now())
+}

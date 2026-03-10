@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LandingCta } from "@/components/landing/LandingCta";
+import { InviteCampusForm } from "@/components/landing/InviteCampusForm";
 
 export default function Home() {
   return (
@@ -116,38 +117,61 @@ export default function Home() {
           <h2 className="text-center text-2xl font-bold text-zinc-900 sm:text-3xl">
             How it works
           </h2>
-          <p className="mt-3 text-center text-zinc-600">Three steps. No hassle.</p>
+          <p className="mt-3 text-center text-zinc-600">
+            Three steps: sign up, browse, then book or contact. No hassle.
+          </p>
           <div className="mt-12 grid gap-10 sm:grid-cols-3">
             <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-200 text-2xl font-bold text-zinc-700">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-2xl font-bold text-white">
                 1
               </div>
-              <h3 className="mt-4 font-semibold text-zinc-900">Sign up</h3>
-              <p className="mt-2 text-sm text-zinc-600">Use your college email. Free and quick.</p>
+              <h3 className="mt-4 font-semibold text-zinc-900">Sign up with college email</h3>
+              <p className="mt-2 text-sm text-zinc-600">
+                Create a free account using your college email. Quick and verified.
+              </p>
               <Link href="/signup" className="mt-3 inline-block text-sm font-medium text-zinc-900 hover:underline">
                 Create account →
               </Link>
             </div>
             <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-200 text-2xl font-bold text-zinc-700">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-2xl font-bold text-white">
                 2
               </div>
-              <h3 className="mt-4 font-semibold text-zinc-900">Browse or list</h3>
-              <p className="mt-2 text-sm text-zinc-600">Find a PG, tiffin, or ride — or add your own from the dashboard.</p>
+              <h3 className="mt-4 font-semibold text-zinc-900">Browse & search</h3>
+              <p className="mt-2 text-sm text-zinc-600">
+                Find PGs, tiffin centers, or rides. Use filters and search by location or keyword.
+              </p>
               <Link href="/pg" className="mt-3 inline-block text-sm font-medium text-zinc-900 hover:underline">
                 Browse PGs →
               </Link>
             </div>
             <div className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-200 text-2xl font-bold text-zinc-700">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 text-2xl font-bold text-white">
                 3
               </div>
-              <h3 className="mt-4 font-semibold text-zinc-900">Book or offer</h3>
-              <p className="mt-2 text-sm text-zinc-600">Book a stay or a seat. Connect with students you can trust.</p>
+              <h3 className="mt-4 font-semibold text-zinc-900">Book or contact</h3>
+              <p className="mt-2 text-sm text-zinc-600">
+                Book a seat on a ride, or contact listing owners for PGs and tiffin. All within your campus.
+              </p>
               <Link href="/rides" className="mt-3 inline-block text-sm font-medium text-zinc-900 hover:underline">
                 Find rides →
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Invite your campus */}
+      <section className="border-t border-zinc-200 bg-white px-4 py-16 sm:px-6 sm:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
+            Invite your campus
+          </h2>
+          <p className="mt-3 text-zinc-600">
+            Is your college not listed? Tell us — we&apos;ll get in touch when we add it.
+          </p>
+          <div className="mt-10">
+            <InviteCampusForm />
           </div>
         </div>
       </section>
